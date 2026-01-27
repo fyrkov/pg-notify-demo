@@ -4,6 +4,7 @@ import io.github.fyrkov.pg_notify_demo.publisher.Publisher
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
 import kotlinx.coroutines.*
+import org.postgresql.PGNotification
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -32,9 +33,10 @@ class PgListener(
         scope.cancel()
     }
 
-    private fun onNotify(payload: String?) {
-        log.info("Received PG notification: {}", payload)
-        publisher.publish()
+    private fun onNotify(payload: Array<out PGNotification>) {
+        val ids: List<Long> = payload.map { it.parameter.toLong() }
+        log.info("Received {} PG notifications: {}", payload.size, ids)
+        publisher.publish(ids)
     }
 
     private suspend fun listenLoop() {
@@ -50,9 +52,7 @@ class PgListener(
             while (currentCoroutineContext().isActive) {
                 // blocks up to timeoutMs waiting for NOTIFY
                 val notifications = pg.getNotifications(0)
-                notifications?.forEach { notification ->
-                    onNotify(notification.parameter)
-                }
+                onNotify(notifications)
             }
         }
     }

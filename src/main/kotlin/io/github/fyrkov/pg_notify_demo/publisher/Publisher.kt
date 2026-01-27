@@ -15,8 +15,8 @@ class Publisher(
     // Schedulers disabled to demonstrate the work of the listen/notify mechanism
     // @Scheduled(fixedRateString = "\${outbox.publish.interval}")
     @Transactional
-    fun publish() {
-        val records: List<OutboxRecord> = outboxRepository.selectUnpublished(100)
+    fun publish(ids: List<Long>) {
+        val records: List<OutboxRecord> = outboxRepository.select(ids)
         // Batch publish records
         log.info("Published {} records", records.size)
     }

@@ -44,6 +44,26 @@ class OutboxRepository(
         ).map { deser(it) }
     }
 
+    fun select(ids: List<Long>): List<OutboxRecord> {
+        if (ids.isEmpty()) return emptyList()
+        return dsl.fetch(
+            """
+                with picked as (
+                  select id
+                  from outbox
+                  where id = any(?)
+                    and published_at is null
+                  for update skip locked
+                )
+                update outbox
+                set published_at = now()
+                where id in (select id from picked)
+                returning *;
+                """.trimIndent(),
+            ids.toTypedArray()
+        ).map { deser(it) }
+    }
+
     private fun deser(record: Record): OutboxRecord = OutboxRecord(
         id = record.get(field("id", Long::class.java)),
         aggregateType = record.get(field("aggregate_type", String::class.java)),

@@ -10,6 +10,6 @@ class PublisherIntegrationTest @Autowired constructor(
 
     @Test
     fun publish() {
-        publisher.publish()
+        publisher.publish(listOf(123))
     }
 }
