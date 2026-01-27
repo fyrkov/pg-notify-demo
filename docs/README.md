@@ -6,9 +6,10 @@ The repo is forked from the https://github.com/fyrkov/outbox-demo basic implemen
 ## Notes
 
 ### Listen/Notify mechanism
-The Listen/Notify of Postgres is often overlooked, but it is a very powerful mechanism 
-that provides a simple and efficient way to send signals from the database to client applications.
-It enables tighter integration between the database and services by allowing the database to actively notify clients about state changes.
+PostgreSQL’s LISTEN/NOTIFY mechanism is often overlooked, 
+yet it provides a powerful and efficient way to signal client applications directly from the database.
+It allows the database to actively notify application services about state changes.
+
 How does it work?
 
 In this demo, a basic _outbox pattern_ implementation is used to demonstrate the mechanism.
@@ -39,6 +40,9 @@ For that reason the `PgListener` sets `autoCommit=true` so that `st.execute("lis
 and the listener connection becomes active right away.
 
 In other words, `LISTEN` becomes active only after commit, and `NOTIFY` is delivered only when the sending transaction commits.
+
+#### Reliability 
+
 
 ## How to run locally
 
