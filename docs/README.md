@@ -42,7 +42,25 @@ and the listener connection becomes active right away.
 In other words, `LISTEN` becomes active only after commit, and `NOTIFY` is delivered only when the sending transaction commits.
 
 #### Reliability 
+Here’s a cleaner, better-structured version:
 
+Notifications are not durable and provide no replay, acknowledgements, or exactly-once / at-least-once delivery guarantees; 
+they also offer no backpressure or flow control, and payloads are limited to approximately 8 KB.
+In particular, notifications are delivered only to clients that are actively connected and listening at the time the `NOTIFY` is committed. 
+If a listener is offline, any notifications sent during that period are permanently lost and cannot be replayed.
+
+Given these limitations, the LISTEN/NOTIFY mechanism is not a drop-in replacement for polling in a production outbox pattern, 
+but it can be safely used as an additional signaling mechanism.
+
+In other words, Listen/Notify provides best-effort, non-durable signaling rather than reliable message delivery.
+
+#### Applications scenarios
+Other good scenarios for using Listen/Notify may include:
+
+* wake-up signals ("new work available")
+* cache invalidation
+* reducing polling latency (the Outbox pattern case)
+* coordination between DB-backed components
 
 ## How to run locally
 
