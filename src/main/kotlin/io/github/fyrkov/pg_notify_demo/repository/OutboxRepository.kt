@@ -25,11 +25,23 @@ class OutboxRepository(
     }
 
     fun selectUnpublished(limit: Int): List<OutboxRecord> {
-        return dsl.selectFrom(table("outbox"))
-            .where(field("published_at").isNull())
-            .orderBy(field("id"))
-            .limit(limit)
-            .fetch { deser(it) }
+        return dsl.fetch(
+            """
+                with picked as (
+                  select id
+                  from outbox
+                  where published_at is null
+                  order by id
+                  limit ?
+                  for update skip locked
+                )
+                update outbox
+                set published_at = now()
+                where id in (select id from picked)
+                returning *;
+                """.trimIndent(),
+            limit
+        ).map { deser(it) }
     }
 
     private fun deser(record: Record): OutboxRecord = OutboxRecord(

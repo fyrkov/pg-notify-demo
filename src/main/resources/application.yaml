@@ -7,4 +7,4 @@ spring:
     password: secret
 outbox:
   publish:
-    interval: PT0.1S
+    interval: PT0.5S
