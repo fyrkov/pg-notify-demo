@@ -1,18 +1,16 @@
 # Demo project for the Postgres Listen/Notify mechanism
 
-This repository is a small demo of the _Postgres Listen/Notify_ mechanism.
-The repo is forked from the https://github.com/fyrkov/outbox-demo basic implementation.
+This repository is a small demo of the Postgres _LISTEN/NOTIFY_ mechanism.
 
 ## Notes
 
 ### Listen/Notify mechanism
-PostgreSQL’s LISTEN/NOTIFY mechanism is often overlooked, 
-yet it provides a powerful and efficient way to signal client applications directly from the database.
-It allows the database to actively notify application services about state changes.
+PostgreSQL’s LISTEN/NOTIFY mechanism is often overlooked, yet it provides an efficient way for the database to emit signals to connected client applications, 
+allowing it to take an active role rather than acting solely as a passive data store.
 
 How does it work?
 
-In this demo, a basic _outbox pattern_ implementation is used to demonstrate the mechanism.
+In this demo, we will use the basic _outbox pattern_ implementation (forked from the https://github.com/fyrkov/outbox-demo) to demonstrate the setup.
 
 A test `Consumer` component is generating new events and storing them to the `outbox` table.
 
