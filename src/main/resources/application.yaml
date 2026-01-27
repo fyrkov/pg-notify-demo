@@ -8,3 +8,5 @@ spring:
 outbox:
   publish:
     interval: PT0.5S
+  notify:
+    channel: outbox
