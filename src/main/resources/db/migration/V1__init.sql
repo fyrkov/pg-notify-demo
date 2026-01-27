@@ -12,3 +12,20 @@ create table outbox_unpublished partition of outbox for values in (null);
 create table outbox_published partition of outbox default;
 
 create index idx on outbox_unpublished (id);
+
+
+create or replace function notify_outbox_insert()
+    returns trigger
+    language plpgsql
+as $$
+begin
+    perform pg_notify('outbox', new.id::text);
+    return new;
+end;
+$$;
+
+create trigger outbox_insert_notify
+    after insert on outbox_unpublished
+    for each row
+execute function notify_outbox_insert();
+

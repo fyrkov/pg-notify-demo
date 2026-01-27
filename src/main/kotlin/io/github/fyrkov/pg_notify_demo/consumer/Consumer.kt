@@ -13,7 +13,7 @@ class Consumer(
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
-    @Scheduled(fixedRateString = "PT0.1S")
+    @Scheduled(fixedRateString = "PT0.2S")
     fun store() {
         val aggregateType = "account"
         val aggregateId = UUID.randomUUID().toString()

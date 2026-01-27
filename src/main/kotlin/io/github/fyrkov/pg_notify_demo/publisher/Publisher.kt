@@ -18,6 +18,6 @@ class Publisher(
     fun publish() {
         val records: List<OutboxRecord> = outboxRepository.selectUnpublished(100)
         // Batch publish records
-        log.info("Published {} records", records.size)
+        //log.info("Published {} records", records.size)
     }
 }
