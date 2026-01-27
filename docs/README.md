@@ -7,23 +7,21 @@ The repo is forked from the https://github.com/fyrkov/outbox-demo basic implemen
 
 ### Listen/Notify mechanism
 The Listen/Notify of Postgres is often overlooked, but it is a very powerful mechanism 
-that provides a simple and efficient way to send signals from DB to the client applications.
-It allows building smarter integrations between DB and the services.
+that provides a simple and efficient way to send signals from the database to client applications.
+It enables tighter integration between the database and services by allowing the database to actively notify clients about state changes.
 How does it work?
-
-Postgres is capable of establishing a TCP channel for exchanging messages between clients and the DB server.
 
 In this demo, a basic _outbox pattern_ implementation is used to demonstrate the mechanism.
 
 A test `Consumer` component is generating new events and storing them to the `outbox` table.
 
-There is a PG trigger on the `outbox` table which triggers on the insertion of new rows.
+A Postgres trigger is defined on the `outbox` table which fires on the insertion of new rows.
 It sends a notification to the `outbox` PG channel with the payload of the `id` column of the inserted row:
 ```sql
 pg_notify('outbox', new.id::text)
 ```
 
-A `PgListener` component of the app opens a connection and listens for notifications from the `outbox` channel:
+On the application side, a `PgListener` component opens a dedicated database connection and subscribes to the `outbox` channel::
 ```kotlin
 dataSource.connection.use { conn ->
     conn.autoCommit = true
@@ -32,11 +30,11 @@ dataSource.connection.use { conn ->
     }
 }
 ```
-Once it receives a notification, it forwards it to the `Publisher` component.
-As a result, it is possible to disable scheduled polling of the `outbox` table on the `Publisher` side.
+When a notification is received, it is forwarded to the `Publisher` component, which triggers immediate processing of new outbox entries. 
+As a result, scheduled polling of the `outbox` table on the publisher side can be reduced or disabled entirely.
 
 #### Listen/Notify is a transactional mechanism.
-It means that both `LISTEN` and `NOTIFY` only take effect after their respective transactions commit.
+It means that both `LISTEN` and `NOTIFY` take effect only after their respective transactions commit.
 For that reason the `PgListener` sets `autoCommit=true` so that `st.execute("listen outbox")` statement commits immediately
 and the listener connection becomes active right away.
 
