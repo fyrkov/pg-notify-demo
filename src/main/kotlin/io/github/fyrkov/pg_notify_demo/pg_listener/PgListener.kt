@@ -1,5 +1,6 @@
 package io.github.fyrkov.pg_notify_demo.pg_listener
 
+import io.github.fyrkov.pg_notify_demo.publisher.Publisher
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
 import kotlinx.coroutines.*
@@ -11,6 +12,7 @@ import javax.sql.DataSource
 @Component
 class PgListener(
     private val dataSource: DataSource,
+    private val publisher: Publisher,
     @Value("\${outbox.notify.channel:outbox}") private val channel: String
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
@@ -32,6 +34,7 @@ class PgListener(
 
     private fun onNotify(payload: String?) {
         log.info("Received PG notification: {}", payload)
+        publisher.publish()
     }
 
     private suspend fun listenLoop() {
