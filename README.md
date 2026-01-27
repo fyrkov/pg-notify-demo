@@ -10,6 +10,8 @@ Postgres is capable of establishing a channel for exchanging messages between cl
 
 In this demo, a basic _outbox pattern_ implementation is used to demonstrate the mechanism.
 
+A test `Consumer` component is generating new events and storing them to the `outbox` table.
+
 There is a PG trigger on the `outbox` table which triggers on the insertion of new rows.
 It sends a notification to the `outbox` channel with the payload of the `id` column of the inserted row.
 
