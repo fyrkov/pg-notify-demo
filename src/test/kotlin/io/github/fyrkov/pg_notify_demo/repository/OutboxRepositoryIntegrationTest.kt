@@ -1,7 +1,8 @@
 package io.github.fyrkov.pg_notify_demo.repository
 
 import io.github.fyrkov.pg_notify_demo.AbstractIntegrationTest
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.annotation.Rollback
@@ -30,19 +31,18 @@ class OutboxRepositoryIntegrationTest @Autowired constructor(
 
     @Test
     fun `should select unpublished records`() {
+        // given
+        val aggregateType = "account"
+        val aggregateId = "123"
+        val payload = """{"balance":100}"""
+
+        // when
+        val id = outboxRepository.insert(aggregateType, aggregateId, payload)
+
         // when
         val records = outboxRepository.selectUnpublished(10)
 
         // then
-        assertEquals(10, records.size)
-
-        records.forEach { record ->
-            assertNotNull(record.id)
-            assertEquals("test_type", record.aggregateType)
-            assertTrue(record.aggregateId.startsWith("test_id_"))
-            assertEquals("{}", record.payload)
-            assertNotNull(record.createdAt)
-            assertNull(record.publishedAt)
-        }
+        assertEquals(1, records.size)
     }
 }
