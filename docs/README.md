@@ -16,12 +16,12 @@ In short, the service consumes events, persists them in the database, and publis
 A test `Consumer` component is generating new events and storing them to the `outbox` table.
 
 A Postgres trigger is defined on the `outbox` table which fires on the insertion of new rows.
-It sends a notification to the `outbox` PG channel with the payload of the `id` column of the inserted row:
+It sends a notification to the `outbox` channel with the payload of the `id` column of the inserted row:
 ```sql
 pg_notify('outbox', new.id::text)
 ```
 
-On the application side, a `PgListener` component opens a dedicated database connection and subscribes to the `outbox` channel::
+On the application side, a `PgListener` component opens a dedicated database connection and subscribes to the same `outbox` channel:
 ```kotlin
 dataSource.connection.use { conn ->
     conn.autoCommit = true
@@ -36,22 +36,23 @@ As a result, scheduled polling of the `outbox` table on the publisher side can b
 #### Listen/Notify is a transactional mechanism.
 It means that both `LISTEN` and `NOTIFY` take effect only after their respective transactions commit.
 For that reason the `PgListener` sets `autoCommit=true` so that `st.execute("listen outbox")` statement commits immediately
-and the listener connection becomes active right away.
+and the listener becomes active right away.
 
 In other words, `LISTEN` becomes active only after commit, and `NOTIFY` is delivered only when the sending transaction commits.
 
-#### Reliability 
-Here’s a cleaner, better-structured version:
+#### Reliability
+The LISTEN/NOTIFY mechanism has certain limitations:
+* notifications are not durable and will be lost if listeners are offline
+* no replay
+* no acknowledgements
+* no exactly-once / at-least-once delivery guarantees
+* no backpressure or flow control
+* payloads are limited to approximately 8 KB
 
-Notifications are not durable and provide no replay, acknowledgements, or exactly-once / at-least-once delivery guarantees; 
-they also offer no backpressure or flow control, and payloads are limited to approximately 8 KB.
-In particular, notifications are delivered only to clients that are actively connected and listening at the time the `NOTIFY` is committed. 
-If a listener is offline, any notifications sent during that period are permanently lost and cannot be replayed.
-
-Given these limitations, the LISTEN/NOTIFY mechanism is not a drop-in replacement for polling in a production outbox pattern, 
+Given these limitations, the LISTEN/NOTIFY mechanism is not a drop-in replacement for polling in the production outbox, 
 but it can be safely used as an additional signaling mechanism.
 
-In other words, Listen/Notify provides best-effort, non-durable signaling rather than reliable message delivery.
+In other words, Listen/Notify provides **best-effort, non-durable signaling** rather than **reliable message delivery**.
 
 #### Applications scenarios
 Other good scenarios for using Listen/Notify may include:
