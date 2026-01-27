@@ -13,7 +13,7 @@ How does it work?
 In this demo, we will use the basic _outbox pattern_ implementation (forked from the https://github.com/fyrkov/outbox-demo) to demonstrate the setup.
 In short, the service consumes events, persists them in the database, and publishes them further downstream.
 
-A test `Consumer` component is generating new events and storing them to the `outbox` table.
+A mock `Consumer` component is generating new events and storing them to the `outbox` table.
 
 A Postgres trigger is defined on the `outbox` table which fires on the insertion of new rows.
 It sends a notification to the `outbox` channel with the payload of the `id` column of the inserted row:
