@@ -1,6 +1,6 @@
 # Demo project for the Postgres Listen/Notify mechanism
 
-This repository is a small demo of the _Postgres listen-notify_ mechanism.
+This repository is a small demo of the _Postgres Listen/Notify_ mechanism.
 The repo is forked from the https://github.com/fyrkov/outbox-demo basic implementation.
 
 ## Notes
