@@ -12,6 +12,7 @@ class Publisher(
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
+    // Schedulers disabled to demonstrate the work of the listen/notify mechanism
     // @Scheduled(fixedRateString = "\${outbox.publish.interval}")
     @Transactional
     fun publish() {
