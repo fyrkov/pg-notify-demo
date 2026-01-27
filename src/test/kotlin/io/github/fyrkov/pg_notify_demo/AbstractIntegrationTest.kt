@@ -1,4 +1,4 @@
-package io.github.fyrkov.outbox_demo
+package io.github.fyrkov.pg_notify_demo
 
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection

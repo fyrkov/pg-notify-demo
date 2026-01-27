@@ -1,6 +1,6 @@
-package io.github.fyrkov.outbox_demo.repository
+package io.github.fyrkov.pg_notify_demo.repository
 
-import io.github.fyrkov.outbox_demo.domain.OutboxRecord
+import io.github.fyrkov.pg_notify_demo.domain.OutboxRecord
 import org.jooq.DSLContext
 import org.jooq.JSONB
 import org.jooq.Record

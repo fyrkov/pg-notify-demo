@@ -1,4 +1,4 @@
-package io.github.fyrkov.outbox_demo.config
+package io.github.fyrkov.pg_notify_demo.config
 
 import org.flywaydb.core.Flyway
 import org.springframework.boot.ApplicationRunner

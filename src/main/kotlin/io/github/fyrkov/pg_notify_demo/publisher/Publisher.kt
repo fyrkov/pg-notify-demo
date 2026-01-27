@@ -1,7 +1,7 @@
-package io.github.fyrkov.outbox_demo.publisher
+package io.github.fyrkov.pg_notify_demo.publisher
 
-import io.github.fyrkov.outbox_demo.domain.OutboxRecord
-import io.github.fyrkov.outbox_demo.repository.OutboxRepository
+import io.github.fyrkov.pg_notify_demo.domain.OutboxRecord
+import io.github.fyrkov.pg_notify_demo.repository.OutboxRepository
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component

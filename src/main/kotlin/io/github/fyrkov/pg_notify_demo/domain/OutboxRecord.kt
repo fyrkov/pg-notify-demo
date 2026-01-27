@@ -1,4 +1,4 @@
-package io.github.fyrkov.outbox_demo.domain
+package io.github.fyrkov.pg_notify_demo.domain
 
 import java.time.Instant
 

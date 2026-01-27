@@ -1,6 +1,6 @@
-package io.github.fyrkov.outbox_demo.repository
+package io.github.fyrkov.pg_notify_demo.repository
 
-import io.github.fyrkov.outbox_demo.AbstractIntegrationTest
+import io.github.fyrkov.pg_notify_demo.AbstractIntegrationTest
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
