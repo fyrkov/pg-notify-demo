@@ -1,10 +1,7 @@
 # Demo of the Postgres Listen/Notify mechanism
 ![image.png](image.png)
-This repository is a small demo of the Postgres _LISTEN/NOTIFY_ mechanism.
 
-## Notes
-
-### Listen/Notify mechanism
+## Listen/Notify mechanism
 PostgreSQL’s LISTEN/NOTIFY mechanism is often overlooked, yet it provides an efficient way for the database to emit signals to connected client applications, 
 allowing it to take an active role rather than acting solely as a passive data store.
 
@@ -33,14 +30,14 @@ dataSource.connection.use { conn ->
 When a notification is received, it is forwarded to the `Publisher` component, which triggers immediate processing of new outbox entries. 
 As a result, scheduled polling of the `outbox` table on the publisher side can be reduced or disabled entirely.
 
-#### Listen/Notify is a transactional mechanism.
+### Listen/Notify is a transactional mechanism.
 It means that both `LISTEN` and `NOTIFY` take effect only after their respective transactions commit.
 For that reason the `PgListener` sets `autoCommit=true` so that `st.execute("listen outbox")` statement commits immediately
 and the listener becomes active right away.
 
 In other words, `LISTEN` becomes active only after commit, and `NOTIFY` is delivered only when the sending transaction commits.
 
-#### Reliability
+### Reliability
 The LISTEN/NOTIFY mechanism has certain limitations:
 * notifications are not durable and will be lost if listeners are offline
 * no replay
@@ -54,7 +51,7 @@ but it can be safely used as an additional signaling mechanism.
 
 In other words, Listen/Notify provides **best-effort, non-durable signaling** rather than **reliable message delivery**.
 
-#### Applications scenarios
+### Applications scenarios
 Other good scenarios for using Listen/Notify may include:
 
 * wake-up signals ("new work available")
@@ -62,39 +59,8 @@ Other good scenarios for using Listen/Notify may include:
 * reducing polling latency (the Outbox pattern case)
 * coordination between DB-backed components
 
-## How to run locally
-
-### Dependencies
-
-* JDK >= 21
-* Docker
-
-For running locally, start DB:
-
-```bash
-docker compose up -d
-```
-
-Fixed port 15433 is used which must be available!
-
-Start the app:
-
-```
-./gradlew bootRun
-```
-
-## Data model
-
-| Column           | Type           | Nullable | Description                                   |
-|:-----------------|:---------------|:---------|:----------------------------------------------|
-| `id`             | `bigint`       | No       | Primary key, auto-generated                   |
-| `aggregate_type` | `varchar(255)` | No       | Type of the aggregate                         |
-| `aggregate_id`   | `varchar(255)` | No       | ID of the aggregate                           |
-| `payload`        | `jsonb`        | No       | Event data in JSON format                     |
-| `created_at`     | `timestamptz`  | No       | Creation timestamp                            |
-| `published_at`   | `timestamptz`  | Yes      | Publication timestamp (NULL if not published) |
-
-
 ## Links
-* https://www.postgresql.org/docs/current/sql-notify.html
-* https://www.postgresql.org/docs/current/sql-listen.html
+* Repository with the demo code: https://github.com/fyrkov/postgres-listen-notify-demo
+* Postgres documentation:
+  * https://www.postgresql.org/docs/current/sql-notify.html
+  * https://www.postgresql.org/docs/current/sql-listen.html
