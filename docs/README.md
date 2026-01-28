@@ -15,7 +15,20 @@ A mock `Consumer` component is generating new events and storing them to the `ou
 A Postgres trigger is defined on the `outbox` table which fires on the insertion of new rows.
 It sends a notification to the `outbox` channel with the payload of the `id` column of the inserted row:
 ```sql
-pg_notify('outbox', new.id::text)
+create or replace function notify_outbox_insert()
+    returns trigger
+    language plpgsql
+as $$
+begin
+    perform pg_notify('outbox', new.id::text);
+    return new;
+end;
+$$;
+
+create trigger outbox_insert_notify
+    after insert on outbox_unpublished
+    for each row
+execute function notify_outbox_insert();
 ```
 
 On the application side, a `PgListener` component opens a dedicated database connection and subscribes to the same `outbox` channel:
@@ -25,6 +38,9 @@ dataSource.connection.use { conn ->
     conn.createStatement().use { st ->
         st.execute("listen outbox")
     }
+    ...
+    val pg = conn.unwrap(org.postgresql.PGConnection::class.java)
+    val notifications = pg.getNotifications(0)
 }
 ```
 When a notification is received, it is forwarded to the `Publisher` component, which triggers immediate processing of new outbox entries. 
