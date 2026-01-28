@@ -7,7 +7,7 @@ allowing it to take an active role rather than acting solely as a passive data s
 
 How does it work?
 
-In this demo, we will use the basic _outbox pattern_ implementation (forked from the https://github.com/fyrkov/outbox-demo) to demonstrate the setup.
+In this demo, we will use the basic _outbox pattern_ implementation to demonstrate the setup.
 In short, the service consumes events, persists them in the database, and publishes them further downstream.
 
 A mock `Consumer` component is generating new events and storing them to the `outbox` table.
