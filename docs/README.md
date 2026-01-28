@@ -1,5 +1,5 @@
-# Demo project for the Postgres Listen/Notify mechanism
-
+# Demo of the Postgres Listen/Notify mechanism
+![image.png](image.png)
 This repository is a small demo of the Postgres _LISTEN/NOTIFY_ mechanism.
 
 ## Notes
