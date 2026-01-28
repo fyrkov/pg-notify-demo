@@ -1,4 +1,4 @@
-# Demo of the Postgres Listen/Notify mechanism
+# Postgres Listen/Notify mechanism
 ![image.png](image.png)
 
 ## Listen/Notify mechanism
